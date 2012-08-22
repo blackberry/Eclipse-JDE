@@ -1,0 +1,4 @@
+/feature>
+  <feature url="features/${jde.feature.name}${jde.version.family}_${jde.version}.jar" id="${jde.feature.name}${jde.version.family}" version="${jde.version}">
+    <category name="net_rim_ejde"/>
+  </feature

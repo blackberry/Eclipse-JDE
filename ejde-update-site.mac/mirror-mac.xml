@@ -1,0 +1,21 @@
+<project name="mirror-jde-mac" default="mirror-jde">
+ <!-- <property name="jde.url.mac.base" value="http://www.blackberry.com/go/eclipseUpdate/mac/java" /> //old -->
+ <property name="jde.url.mac.base" value="http://www.blackberry.com/developers/jar/mac/java"/>
+
+  <property name="bb.sdk.local.repo.mac" value="bb.sdk.local.repo.mac" />
+
+  <target name="mirror-jde">
+    <p2.mirror destination="file:/${bb.sdk.local.repo.mac}" description="BB SDK local repo Mac" verbose="true" validate="true">
+      <source>
+        <repository location="${jde.url.mac.base}" />
+      	<repository location="http://download.eclipse.org/releases/indigo/" />
+      </source>
+      <iu id="net.rim.ejde.componentpack7.1.0" />
+      <iu id="net.rim.ejde.feature.componentpack7.1.0.feature.jar" />
+      <iu id="org.eclipse.ui" />
+      <iu id="org.eclipse.core.runtime" />
+      <slicingOptions includeFeatures="true" followStrict="true"/>
+    </p2.mirror>
+
+  </target>
+</project>

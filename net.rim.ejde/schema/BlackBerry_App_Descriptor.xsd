@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- BlackBerry Java Application Descriptor schema ver 1.1
+Research In Motion Ltd. © 2009-2010
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="StartupTiers">
+		<xs:restriction base="xs:byte">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AppTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BlackBerry Application"/>
+			<xs:enumeration value="MIDlet"/>
+			<xs:enumeration value="Library"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ModelVersions">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="1.1.1"/>
+			<xs:enumeration value="1.1.2"/>
+			<xs:enumeration value="1.3.1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedString63">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="63"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedString255">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedTokens255">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKENS">
+					<xs:maxLength value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedTokens127">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKENS">
+					<xs:maxLength value="127"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedToken63">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:maxLength value="63"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="Tag63">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="63"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="($\{)?[a-zA-Z_]{1,63}[-a-zA-Z_0-9.]{0,63}[\}]?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Aliases63-255">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:maxLength value="255"/>
+			<xs:pattern value="([a-zA-Z_]{1,63}[-\sa-zA-Z_0-9.]{0,63}[;]?)*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedURI127">
+		<xs:restriction base="xs:anyURI">
+			<xs:maxLength value="127"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LimitedURI255">
+		<xs:restriction base="xs:anyURI">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VersionType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="63"/>
+			<!-- xs:pattern value="\d{1,3}[.]\d{1,3}([.][a-zA-Z.0-9]{0,54})?"/ -->
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="T_Resources">
+		<xs:sequence>
+			<xs:element ref="Icons"/>
+		</xs:sequence>
+		<xs:attribute ref="hasTitleResource"/>
+		<xs:attribute ref="TitleResourceBundleKey"/>
+		<xs:attribute ref="TitleResourceBundleName"/>
+		<xs:attribute ref="TitleResourceBundleClassName"/>
+		<xs:attribute ref="TitleResourceBundleRelativePath"/>
+		<xs:attribute ref="DescriptionId"/>
+	</xs:complexType>
+    <xs:complexType name="T_KeywordResources">
+        <xs:attribute ref="KeywordResourceBundleKey"/>
+        <xs:attribute ref="KeywordResourceBundleName"/>
+        <xs:attribute ref="KeywordResourceBundleClassName"/>
+        <xs:attribute ref="KeywordResourceBundleRelativePath"/>
+    </xs:complexType> 	
+	<xs:complexType name="T_Properties">
+		<xs:sequence>
+			<xs:element ref="General"/>
+			<xs:element ref="Application"/>
+			<xs:element ref="Resources"/>
+			<xs:element ref="KeywordResources" minOccurs="0" maxOccurs="1"/> 			
+			<xs:element ref="Compile"/>
+			<xs:element ref="Packaging"/>
+			<xs:element ref="HiddenProperties"/>
+			<xs:element ref="AlternateEntryPoints"/>
+		</xs:sequence>
+		<xs:attribute ref="ModelVersion" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="T_PreprocessorTag">
+		<xs:attribute ref="PreprocessorDefine"/>
+		<xs:attribute ref="IsActive"/>
+		<xs:attribute ref="Scope"/>
+	</xs:complexType>
+	<xs:complexType name="T_PreprocessorDefines">
+		<xs:sequence>
+			<xs:element ref="PreprocessorTag" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_HiddenProperties">
+		<xs:sequence>
+			<xs:element ref="ClassProtection"/>
+			<xs:element ref="PackageProtection"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_Packaging">
+		<xs:sequence>
+			<xs:element ref="AlxFiles"/>
+		</xs:sequence>
+		<xs:attribute ref="PreBuildStep"/>
+		<xs:attribute ref="PostBuildStep"/>
+		<xs:attribute ref="OutputFileName"/>
+		<xs:attribute ref="OutputFolder"/>
+		<xs:attribute ref="CleanStep"/>
+		<xs:attribute ref="GenerateALXFile"/>
+	</xs:complexType>
+	<xs:complexType name="T_Icons">
+		<xs:sequence>
+			<xs:element ref="Icon" minOccurs="0" maxOccurs="2"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_Icon">
+		<xs:attribute ref="IsFocus"/>
+		<xs:attribute ref="CanonicalFileName"/>
+	</xs:complexType>
+	<xs:complexType name="T_General">
+		<xs:attribute ref="Version"/>
+		<xs:attribute ref="Vendor"/>
+		<xs:attribute name="Title" type="LimitedString255"/>
+		<xs:attribute ref="Description"/>
+	</xs:complexType>
+	<xs:complexType name="T_Compile">
+		<xs:sequence>
+			<xs:element ref="PreprocessorDefines"/>
+		</xs:sequence>
+		<xs:attribute ref="OutputCompilerMessages"/>
+		<xs:attribute ref="CreateWarningForNoExportedRoutine"/>
+		<xs:attribute ref="ConvertImages"/>
+		<xs:attribute ref="CompressResources"/>
+		<xs:attribute ref="AliasList"/>
+	</xs:complexType>
+	<xs:complexType name="T_Application">
+		<xs:attribute ref="Type"/>
+		<xs:attribute name="StartupTier" type="StartupTiers"/>
+		<xs:attribute ref="MainMIDletName"/>
+		<xs:attribute ref="MainArgs"/>
+		<xs:attribute ref="IsSystemModule"/>
+		<xs:attribute ref="IsAutostartup"/>
+		<xs:attribute ref="HomeScreenPosition"/>
+	</xs:complexType>
+	<xs:complexType name="T_AlxFiles">
+		<xs:sequence>
+			<xs:element ref="string" minOccurs="0" maxOccurs="16"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_AlternateEntryPoints">
+		<xs:sequence>
+			<xs:element ref="AlternateEntryPoint" minOccurs="0" maxOccurs="1024"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_ClassProtection">
+		<xs:sequence>
+			<xs:element ref="ProtectInfo" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_PackageProtection">
+		<xs:sequence>
+			<xs:element ref="ProtectInfo" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_ProtectInfo">
+		<xs:attribute ref="ProtectedClassName"/>
+		<xs:attribute ref="KeyFileName"/>
+	</xs:complexType>
+	<xs:complexType name="T_AlternateEntryPoint">
+		<xs:sequence>
+            <xs:element ref="Icons"/>		
+		    <xs:element ref="KeywordResources" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute ref="hasTitleResource"/>
+		<xs:attribute name="Title" type="LimitedString255"/>
+		<xs:attribute name="StartupTier" type="StartupTiers"/>
+		<xs:attribute ref="TitleResourceBundleKey"/>
+		<xs:attribute ref="TitleResourceBundleName"/>
+		<xs:attribute ref="TitleResourceBundleClassName"/>
+		<xs:attribute ref="TitleResourceBundleRelativePath"/>
+		<xs:attribute ref="MainMIDletName"/>
+		<xs:attribute ref="IsSystemModule"/>
+		<xs:attribute ref="IsAutostartup"/>
+		<xs:attribute ref="HomeScreenPosition"/>
+		<xs:attribute ref="ArgumentsForMain"/>
+	</xs:complexType>
+	<xs:attribute name="ModelVersion" type="ModelVersions"/>
+	<xs:attribute name="hasTitleResource" type="xs:boolean"/>
+	<xs:attribute name="Version" type="VersionType"/>
+	<xs:attribute name="Vendor" type="LimitedString255"/>
+	<xs:attribute name="Type" type="AppTypes"/>
+	<xs:attribute name="TitleResourceBundleKey" type="LimitedString255"/>
+	<xs:attribute name="TitleResourceBundleName" type="LimitedString255"/>
+	<xs:attribute name="TitleResourceBundleClassName" type="LimitedString255"/>
+	<xs:attribute name="TitleResourceBundleRelativePath" type="LimitedString255"/>
+    <xs:attribute name="KeywordResourceBundleKey" type="LimitedString255"/>
+    <xs:attribute name="KeywordResourceBundleName" type="LimitedString255"/>
+    <xs:attribute name="KeywordResourceBundleClassName" type="LimitedString255"/>
+    <xs:attribute name="KeywordResourceBundleRelativePath" type="LimitedString255"/> 	
+	<xs:attribute name="PreprocessorDefine" type="Tag63"/>
+	<xs:attribute name="PreBuildStep" type="LimitedString255"/>
+	<xs:attribute name="PostBuildStep" type="LimitedString255"/>
+	<xs:attribute name="OutputFileName" type="LimitedString63"/>
+	<xs:attribute name="OutputFolder" type="LimitedURI127"/>
+	<xs:attribute name="OutputCompilerMessages" type="xs:boolean"/>
+	<xs:attribute name="MainMIDletName" type="LimitedString255"/>
+	<xs:attribute name="MainArgs" type="LimitedString255"/>
+	<xs:attribute name="IsSystemModule" type="xs:boolean"/>
+	<xs:attribute name="IsFocus" type="xs:boolean"/>
+	<xs:attribute name="IsAutostartup" type="xs:boolean"/>
+	<xs:attribute name="IsActive" type="xs:boolean"/>
+	<xs:attribute name="Scope" type="xs:int"/>
+	<xs:attribute name="HomeScreenPosition" type="xs:unsignedByte"/>
+	<xs:attribute name="GenerateALXFile" type="xs:boolean"/>
+	<xs:attribute name="DescriptionId" type="LimitedToken63"/>
+	<xs:attribute name="Description" type="LimitedString255"/>
+	<xs:attribute name="CreateWarningForNoExportedRoutine" type="xs:boolean"/>
+	<xs:attribute name="ConvertImages" type="xs:boolean"/>
+	<xs:attribute name="CompressResources" type="xs:boolean"/>
+	<xs:attribute name="CleanStep" type="LimitedString255"/>
+	<xs:attribute name="CanonicalFileName" type="LimitedURI127"/>
+	<xs:attribute name="ArgumentsForMain" type="LimitedString255"/>
+	<xs:attribute name="AliasList" type="Aliases63-255"/>
+	<xs:attribute name="ProtectedClassName" type="LimitedString255"/>
+	<xs:attribute name="KeyFileName" type="LimitedString255"/>
+	<xs:element name="Resources" type="T_Resources"/>
+    <xs:element name="KeywordResources" type="T_KeywordResources"/>		
+	<xs:element name="Properties" type="T_Properties"/>
+	<xs:element name="PreprocessorTag" type="T_PreprocessorTag"/>
+	<xs:element name="PreprocessorDefines" type="T_PreprocessorDefines"/>
+	<xs:element name="Packaging" type="T_Packaging"/>
+	<xs:element name="Icons" type="T_Icons"/>
+	<xs:element name="Icon" type="T_Icon"/>
+	<xs:element name="General" type="T_General"/>
+	<xs:element name="Compile" type="T_Compile"/>
+	<xs:element name="Application" type="T_Application"/>
+	<xs:element name="AlxFiles" type="T_AlxFiles"/>
+	<xs:element name="HiddenProperties" type="T_HiddenProperties"/>
+	<xs:element name="ClassProtection" type="T_ClassProtection"/>
+	<xs:element name="PackageProtection" type="T_PackageProtection"/>
+	<xs:element name="ProtectInfo" type="T_ProtectInfo"/>
+	<xs:element name="string" type="LimitedURI255" nillable="false"/>
+	<xs:element name="AlternateEntryPoints" type="T_AlternateEntryPoints"/>
+	<xs:element name="AlternateEntryPoint" type="T_AlternateEntryPoint"/>
+</xs:schema>

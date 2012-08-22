@@ -1,0 +1,6 @@
+[June 17, 2009 - author Cris Malinescu]
+
+1. Read ee-files/intro.txt and ee-files/howto.txt
+2. Do the required steps
+3. Modify your $JDE_PRJ_HOME/src/bb-sdk-ee-files.properties to reflect your local file-system structures
+4. Now you are ready to use the BlackBerry SDK and RTE of choice as an Eclipse compile and build environment  

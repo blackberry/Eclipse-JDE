@@ -1,0 +1,6 @@
+*Thirdparty Licenses*
+
+This plugin contains software from the ASM project (http://asm.objectweb.org) which is governed by 
+the terms of the ASM Project License (see http://asm.objectweb.org/license.html, or ASM-License.html 
+found in the root folder of the plugin
+

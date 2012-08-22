@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib-ext/commons-lang-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-ext/log4j-1.2.15.jar" sourcepath="lib-ext-src/log4j-1.2.15-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-ext/asm-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-ext/asm-tree-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-ext/xpp3_min-1.1.4c.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib-ext/xstream-1.3.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="platform:/resource/net.rim.ejde/lib-ext-src/xstream-1.3.1-javadoc.jar"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/JDWP.jar" sourcepath="lib-src/JDWP-source.jar"/>
+	<classpathentry kind="lib" path="lib-ext/org.eclipse.emf.common-2.6.0.v20100614-1136.jar"/>
+	<classpathentry kind="lib" path="lib/JDWSC.jar"/>
+	<classpathentry kind="lib" path="lib/Javapp.jar"/>
+	<classpathentry kind="lib" path="lib/Resource.jar"/>
+	<classpathentry kind="lib" path="lib-ext/jersey-client-1.12.jar"/>
+	<classpathentry kind="lib" path="lib-ext/jersey-core-1.12.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>net.rim</groupId>
+    <artifactId>ejde</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>net.rim.ejde</groupId>
+  <artifactId>net.rim.EclipseJDE.win</artifactId>
+  <packaging>eclipse-feature</packaging>
+
+  <name>EJDEFeature Windows</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>sign</id>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <keystore>${jde.keystore.path}</keystore>
+                    <alias>${jde.keystore.alias}</alias>
+                    <storepass>${jde.keystore.password}</storepass>
+                    <verbose>true</verbose>
+                    <certs>true</certs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="obfuscate" name="yguard">
+
+    <property name="work.dir" value="target/obfuscated"/>
+    <property name="artefact.file" value="target/${project.build.finalName}"/>
+
+    <target name="obfuscate" unless="jde.dev.build">
+        <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="../utils/obfuscation/yguard.jar"/>
+
+        <mkdir dir="${work.dir}"/>
+
+        <property name="renamelog" value="${work.dir}/renamelog-preprocessor.xml"/> <!--default value for rename log-->
+
+        <yguard>			
+            <inoutpair in="${artefact.file}" out="${work.dir}/${project.build.finalName}"/>
+
+            <rename logfile="${renamelog}">
+                <property name="language-conformity" value="legal"/>
+                <property name="overload-enabled" value="true"/>
+                <property name="naming-scheme" value="small"/>
+                <property name="digests" value="none"/>
+
+                <!-- specify the baseline for incremental Java obfuscation-->
+                <!-- the baseline.xml is the copy of renamelog.xml in previous build -->
+                <!-- <map logfile="${buildType.dir}/baseline.xml"/> -->
+
+                <keep localvariabletable="true" localvariabletypetable="true">
+                    <linenumbertable>
+                        <property name="mapping-scheme" value="scramble"/>
+                        <patternset id="RIMPatternSet">
+                            <include name="net.rim.**.*"/>
+                        </patternset>
+                    </linenumbertable>
+                    <sourcefile>
+                        <property name="mapping" value="RIMEIDE"/>
+                        <patternset refid="RIMPatternSet"/>
+                    </sourcefile>
+
+                    <!-- Specify patterns to avoid obfuscation -->
+                    <!-- 1. for RIM IDE related packages -->
+                    <!-- 1.1
+                            1) preserve all class names under "net.rim.ide" and "net.rim.usb" packages
+                            2) preserve all public, protected or default-access (package) methods and fields declared in above classes
+                    -->
+                    <class methods="friendly" fields="friendly">
+                        <patternset>
+                            <include name="net.rim.ide.**.*"/>
+                            <include name="net.rim.usb.*"/>
+                            <include name="net.rim.vm.EventLog"/>
+                            <!-- Following packages should be removed once Cris completes his changes -->
+                            <include name="net.rim.sdk.*"/>
+                            <include name="net.rim.sdk.rc.*"/>
+                            <include name="net.rim.sdk.rc.parser.*"/>
+                            <include name="net.rim.tools.compiler.debug.*"/>
+                        </patternset>
+                    </class>
+                    <!-- 1.2
+                            1) preserve all class names under "net.rim.sdk.alxbuilder" package
+                            2) preserve all public methods and fields declared in above classes
+                    -->
+                    <class methods="public" fields="public">
+                        <patternset>
+                            <include name="net.rim.sdk.alxbuilder.*"/>
+                        </patternset>
+                    </class>
+                    <!-- 1.3  preserve certain fields for connecting to usb device
+                            1) preserve the field "private int _channelPtr" in class "net.rim.usb.USBConnection"
+                            2) preserve the field "private int _eventPtr" in class "net.rim.usb.USBConnection"
+                            3) preserve the field "private USBConnection _parent" in class "net.rim.usb.USBConnection$AuthThread"
+                            4) preserve the field "private USBConnectionListener _listener" in class "net.rim.usb.USBConnection$AuthThread"
+                    -->
+                    <field class="net.rim.usb.USBConnection" name="_channelPtr"/>
+                    <field class="net.rim.usb.USBConnection" name="_eventPtr"/>
+                    <field class="net.rim.usb.USBConnection$AuthThread" name="_parent"/>
+                    <field class="net.rim.usb.USBConnection$AuthThread" name="_listener"/>
+
+                    <!-- 2. for EJDE packages
+                            1) preserve all class names under "net.rim.ejde.delegate" package and sub-packages
+                            2) preserve all public, protected methods and fields declared in above classes
+                    -->
+                    <class methods="protected" fields="protected">
+                        <patternset>
+                            <include name="net.rim.ejde.delegate.**.*"/>
+                            <include name="net.rim.ejde.external.**.*"/>
+                            <include name="org.objectweb.**.*"/>
+                        </patternset>
+                    </class>
+                </keep>
+
+                <adjust replaceContent="true">
+                    <include name="*.xml"/>
+                    <include name="*.properties"/>
+                    <include name="**/Manifest.mf"/>
+                </adjust>
+            </rename>
+
+        </yguard>
+
+        <move file="${work.dir}/${project.build.finalName}" tofile="${artefact.file}"/>
+    </target>
+
+</project>

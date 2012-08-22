@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="BlackBerry Java Development Tools" version="2.0.0">
+   <topic label="BlackBerry Java SDK and Plug-in for Eclipse" href="http://developer.blackberry.com/java/documentation"/>
+</toc>

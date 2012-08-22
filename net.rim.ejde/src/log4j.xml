@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!-- ===================================================================== -->
+<!--                            Log4j Configuration                        -->
+<!-- ===================================================================== -->
+<!--
+	| For more configuration infromation and examples see the Jakarta Log4j
+	| website: http://jakarta.apache.org/log4j
+-->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"	>
+
+	<!-- ================================================================ -->
+	<!--  Append messages to the console                                  -->
+	<!-- ================================================================ -->
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Threshold" value="TRACE" />
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<!-- ================================================================ -->
+	<!--  Append messages to a tcp port for log4j.chainsaw listener -->
+	<!-- ================================================================ -->
+	<appender name="SocketAppender" class="org.apache.log4j.net.SocketAppender">
+		<param name="RemoteHost" value="localhost"/>
+		<param name="Threshold" value="TRACE"/>
+		<param name="Port" value="4445"/>
+		<param name="LocationInfo" value="true"/>
+	</appender>
+
+	<!-- ================================================================ -->
+	<!--  Append messages to the log file (workspace/.metadata/.blackberry.log) -->
+	<!-- ================================================================ -->
+	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+		<param name="Threshold" value="TRACE"/>
+		<param name="File" value="${osgi.logfile}-ejde"/>
+		<param name="Append" value="true"/>
+		<param name="MaxFileSize" value="10MB"/>
+		<param name="MaxBackupIndex" value="99"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+  <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+    <appender-ref ref="FILE" />
+    <appender-ref ref="CONSOLE" />
+  </appender>
+
+  <root>
+    <priority value="TRACE" />
+    <appender-ref ref="ASYNC" />
+  </root>
+
+
+</log4j:configuration>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+  <category-def name='net_rim_ejde' label='BlackBerry Java Plug-in Category'/>
+  <feature url="features/net.rim.EclipseJDE_2.0.0.qualifier.jar" id="net.rim.EclipseJDE" version="2.0.0.qualifier">
+    <category name='net_rim_ejde'/>
+  </feature> 
+</site>

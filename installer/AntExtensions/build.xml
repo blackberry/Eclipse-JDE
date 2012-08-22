@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<project name="FeatureUnpackTask" basedir="." default="dist">
+
+    <property name="name" value="${ant.project.name}"/>
+    <property name="version" value="1.0"/>
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          Properties related to the directory tree and 
+          temporary directories used for the build
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <property name="src.dir" value="src"/>    
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          Define source code paths. New modules must be declared here
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <path id="source-code.path">
+    	<pathelement location="${src.dir}"/>
+    </path>
+    
+
+    <!-- ###################################################################
+          Main Targets
+         ################################################################### -->
+
+    <!-- ===================================================================
+          init target to creat required directories 
+         =================================================================== -->
+	<target name="init">
+	    <mkdir dir="${build.dir}"/>
+            <mkdir dir="${dist.dir}"/>
+	</target>
+
+
+    <!-- ===================================================================
+          clean target
+         =================================================================== -->
+	<target name="clean">
+            <delete dir="${build.dir}"/>
+            <delete dir="${dist.dir}"/>
+	</target>
+
+
+    <!-- ===================================================================
+          Compile source codes 
+         =================================================================== -->
+	<target name="compile" depends="init">
+            <javac destdir="${build.dir}" includeantruntime="true" classpath="${plugin.classpath}">
+                <src refid="source-code.path" />
+            </javac>
+	</target>
+
+
+    <!-- ===================================================================
+          dist target
+         =================================================================== -->
+	<target name="dist" depends="compile">
+            <jar jarfile="${dist.dir}/${ant.project.name}.jar" basedir="${build.dir}" />
+	</target>
+                   
+</project>

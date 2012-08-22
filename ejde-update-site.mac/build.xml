@@ -1,0 +1,39 @@
+<project name="process-jde" default="process-jde">
+  <property environment="env"/>
+  <property name="bb.sdk.local.repo.mac" value="/bb.sdk.local.repo.mac"/>
+  <property name="jde.feature.mac.url" value="${bb.sdk.local.repo.mac}/features/${jde.feature}"/>
+  <property name="jde.plugin.mac.url" value="${bb.sdk.local.repo.mac}/plugins/${jde.plugin}"/>
+
+  <condition property="jde.available">
+    <and>
+      <available file="${jde.cache}/jde-mac/${jde.feature}"/>
+      <available file="${jde.cache}/jde-mac/${jde.plugin}"/>
+    </and>
+  </condition>
+  <target name="download-jde" unless="jde.available">
+	<exec executable="java">
+    	<arg value="-jar"/>
+    	<arg value="${env.ECLIPSE_HOME}/plugins/org.eclipse.equinox.launcher_*.jar"/>
+    	<arg value="-application"/>
+    	<arg value="org.eclipse.ant.core.antRunner"/>
+    	<arg value="-buildfile"/>
+    	<arg value="mirror-mac.xml"/>
+  	</exec>
+
+    <mkdir dir="${jde.cache}/jde-mac"/>
+    <copy file="${jde.feature.mac.url}" toDir="${jde.cache}/jde-mac"/>
+    <copy file="${jde.plugin.mac.url}" toDir="${jde.cache}/jde-mac"/>
+  </target>
+  <target name="process-jde" depends="download-jde">
+    <loadfile property="jde.xml.fragment" srcfile="jde-fragment">
+      <filterchain>
+        <expandproperties/>
+      </filterchain>
+    </loadfile>  
+    <replace file="target/site/site.xml" token="/feature" value="${jde.xml.fragment}"/>
+    <copy file="${jde.cache}/jde-mac/${jde.feature}" toDir="target/site/features"/>
+    <copy file="${jde.cache}/jde-mac/${jde.plugin}" toDir="target/site/plugins"/>
+    <delete file="target/site/artifacts.xml"/>
+    <delete file="target/site/content.xml"/>
+  </target>
+</project>

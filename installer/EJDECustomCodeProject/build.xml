@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<project name="EJDE Installer custom code" basedir="." default="dist">
+
+    <property name="name" value="${ant.project.name}"/>
+    <property name="version" value="1.0"/>
+    
+    <property name="debug" value="false" />
+    <property name="deprecation" value="false" />
+    <property name="optimize" value="false" />
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          Properties related to the directory tree and 
+          temporary directories used for the build
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="lib"/>
+    
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          Define source code paths. New modules must be declared here
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <path id="source-code.path">
+    	<pathelement location="${src.dir}"/>
+    </path>
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          Define classpaths for building
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <path id="compile.classpath">
+        <!--
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+            <include name="**/*.zip"/>
+        </fileset>
+        -->
+        <fileset file="${install.anywhere.root}/resource/IAClasses.zip"/>
+    </path>
+
+
+    <!-- ###################################################################
+          Main Targets
+         ################################################################### -->
+
+    <!-- ===================================================================
+          init target to creat required directories 
+         =================================================================== -->
+	<target name="init">
+            <tstamp/>
+            <delete dir="${build.dir}" quiet="true"/>
+            <delete dir="${dist.dir}" quiet="true"/>
+
+            <fail message="Install Anywhere installation folder is not set">
+                <condition>
+                    <not>
+                        <isset property="install.anywhere.root"/>
+                    </not>
+                </condition>
+            </fail>
+
+	    <mkdir dir="${build.dir}"/>
+            <mkdir dir="${dist.dir}"/>
+	</target>
+
+
+    <!-- ===================================================================
+          clean target
+         =================================================================== -->
+	<target name="clean">
+            <delete dir="${build.dir}"/>
+            <delete dir="${dist.dir}"/>
+	</target>
+
+
+    <!-- ===================================================================
+          Compile source codes 
+         =================================================================== -->
+	<target name="compile" depends="init">
+    	<javac 	destdir="${build.dir}" 
+    			debug="${debug}"
+    			deprecation="${deprecation}" 
+	    		optimize="${optimize}" >
+	    	<src refid="source-code.path" />
+    		<classpath refid="compile.classpath" />
+    	</javac>
+	</target>
+
+
+    <!-- ===================================================================
+          dist target
+         =================================================================== -->
+	<target name="dist" depends="compile">
+            <jar jarfile="${dist.dir}/Installer.jar" basedir="${build.dir}" />
+	</target>
+                   
+</project>

@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+
+<project name="EJDE Installer" basedir="." default="dist">
+
+    <target name="init">
+        <!-- everything is based on Maven target folder -->
+        <property name="target.dir" value="target"/>
+        <property name="target.installer.dir" value="${target.dir}/installer"/>
+
+        <property name="target.eclipse.dir" value="${target.dir}/eclipse"/>
+
+        <!-- Define installer information -->
+        <property name="installer.data.dir" value="${target.installer.dir}/InstallerData"/>
+        <property name="installer.data.eclipsePlatform.dir" value="${installer.data.dir}/Eclipse Platform"/>
+        <property name="installer.data.license.dir" value="${installer.data.dir}/LicenseAgreements"/>
+        <property name="installer.data.components.dir" value="${installer.data.dir}/Components"/>
+        <property name="installer.data.components.jde.dir" value="${installer.data.components.dir}/JDEComponents"/>
+        <property name="installer.data.root.dir" value="${installer.data.dir}/eclipse"/>
+        <property name="installer.data.Plugins.dir" value="${installer.data.root.dir}/plugins"/>
+        <property name="installer.data.Features.dir" value="${installer.data.root.dir}/features"/>
+        <property name="installer.builderScript.dir" value="${target.installer.dir}/IAProject"/>
+        <property name="installer.resources.dir" value="${target.installer.dir}/Resources"/>
+        <property name="installer.customCode.dir" value="${target.installer.dir}/CustomCode"/>
+        <property name="installer.license.path" value="${target.installer.dir}/LicenseAgreements"/>
+
+        <echo message="Target set to ${eclipse.target}"/>
+
+        <condition property="eclipse.target" value="helios">
+            <not>
+                <isset property="${eclipse.target}"/>
+            </not>
+        </condition>
+
+        <echo message="Building installer for target platform ${eclipse.target}"/>
+
+        <!-- Define out file installer information -->
+        <property name="window.full.installer" value="BlackBerry_JDE_PluginFull_${ejde.version.family}_${eclipse.target}.exe"/>
+        <property name="mac.full.installer" value="BlackBerry_JDE_PluginFull_${ejde.version.family}_${eclipse.target}.zip"/>
+
+        <taskdef name="IABuildInstallerTask"
+            classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask"
+            classpath="${install.anywhere.root}/resource/build/iaant.jar"/>
+
+    </target>
+
+    <!-- build Installer.jar with installer custom classes -->
+    <target name="build-installer-custom-code" depends="init">
+        <ant antfile="build.xml" dir="EJDECustomCodeProject" />
+    </target>
+
+    <!-- build ant helper -->
+    <target name="build-ant-custom-code" depends="init">
+        <ant antfile="build.xml" dir="AntExtensions" />
+    </target>
+
+    <!-- removes installer folder, needed between win and mac builds -->
+    <target name="clean-installer">
+        <delete dir="${target.installer.dir}" failonerror="false"/>
+    </target>
+
+    <target name="prepare-folders">
+        <mkdir dir="${target.installer.dir}"/>
+    </target>
+
+    <target name="prepareEclipseZipPackages" if="build.os.win">
+        <unzip dest="${installer.data.dir}">
+		  <last>
+			<fileset dir="${jde.eclipse.bundles}/${build.os}/${eclipse.target}">
+				<include name="eclipse*.zip"/>
+			</fileset>
+		  </last>
+		</unzip>
+    </target>
+
+    <target name="prepareEclipseTarPackages" if="build.os.mac">
+        <gunzip>
+		  <last>
+			<fileset dir="${jde.eclipse.bundles}/${build.os}/${eclipse.target}">
+				<include name="eclipse*.tar.gz"/>
+			</fileset>
+		  </last>
+		</gunzip>
+
+        <untar dest="${installer.data.dir}">
+		  <last>
+			<fileset dir="${jde.eclipse.bundles}/${build.os}/${eclipse.target}">
+				<include name="eclipse*.tar"/>
+			</fileset>
+		  </last>
+		</untar>
+    </target>
+
+    <!-- add new supported versions here -->
+    <target name="set-eclipse-version" depends="init">
+        <condition property="eclipse.version" value="3.6.0">
+            <equals arg1="helios" arg2="${eclipse.target}"/>
+        </condition>
+
+        <condition property="eclipse.version" value="3.7.2">
+            <equals arg1="indigo" arg2="${eclipse.target}"/>
+        </condition>
+
+        <property name="jde.bundled.eclipse.version" value="${eclipse.version}"/>
+        <property name="jde.certified.eclipse.versions" value="${eclipse.version}"/>
+        <property name="jde.certified.jdt.versions" value="${eclipse.version}"/>
+
+    </target>
+
+    <target name="prepare-installer-files" depends="set-eclipse-version, clean-installer, prepare-folders, prepareEclipseZipPackages, prepareEclipseTarPackages">
+        <property name="ejde-update-site" value="../ejde-update-site.${build.os}/target/site" />
+        <property name="ejde-update-site-features" value="${ejde-update-site}/features" />
+        <property name="ejde-update-site-plugins" value="${ejde-update-site}/plugins" />
+
+        <mkdir dir="${installer.customCode.dir}"/>
+        <copy todir="${installer.customCode.dir}">
+            <fileset dir="EJDECustomCodeProject/dist"/>
+        </copy>
+
+        <mkdir dir="${installer.license.path}"/>
+        <copy todir="${installer.license.path}">
+            <fileset dir="LicenseAgreements"/>
+        </copy>
+        <!-- prepare features: all feature jars must be unpacked. -->
+        <mkdir dir="${installer.data.Features.dir}"/>
+
+        <taskdef name="FeatureUnpackTask" classname="net.rim.ejde.ant.FeatureUnpackTask">
+            <classpath>
+                <path path="${plugin.classpath}"/>
+                <path path="${basedir}/AntExtensions/dist/FeatureUnpackTask.jar"/>
+            </classpath>
+        </taskdef>
+
+        <FeatureUnpackTask target="${installer.data.Features.dir}">
+            <fileset dir="${ejde-update-site-features}"/>
+        </FeatureUnpackTask >
+
+        <!-- copy plugins -->
+        <copy todir="${installer.data.Plugins.dir}" preservelastmodified="true" overwrite="true">
+            <fileset dir="${ejde-update-site-plugins}">
+                <exclude name="net.rim.ejde.preprocessing.hook*"/>
+            </fileset>
+        </copy>
+
+        <FeatureUnpackTask target="${installer.data.Plugins.dir}">
+            <fileset dir="${ejde-update-site-plugins}">
+                <include name="net.rim.ejde.preprocessing.hook*"/>
+            </fileset>
+        </FeatureUnpackTask >
+
+        <!-- SHOULD THIS BE EXTRACTED BY ANT TASK? -->
+        <property name="pack-version" value="${jde.version.family}_${jde.version}"/>
+        <property name="componentpack.plugin.filename" value="${jde.plugin.name}${pack-version}.jar"/>
+
+        <copy tofile="${installer.builderScript.dir}/EJDEInstaller.iap_xml" file="IAProject/EJDEInstaller-${build.os}-full.iap_xml">
+            <filterset begintoken="$" endtoken="$">
+                <filter token="EJDE_CHECKOUT_DIR" value="${basedir}/${target.dir}"/>
+            </filterset>
+            <filterset begintoken="%" endtoken="%">
+                <filter token="EJDE_VERSION_NUMBER_EMPTY_VALUE" value="${ejde.version}"/>
+                <filter token="EJDE_VERSION_FAMILY_NUMBER_EMPTY_VALUE" value="${ejde.version.family}"/>
+                <filter token="JDE_VERSION_NUMBER_EMPTY_VALUE" value="${jde.version.family}"/>
+                <filter token="BUNDLED_ECLIPSE_VERSION_EMPTY_VALUE" value="${jde.bundled.eclipse.version}"/>
+                <filter token="CERTIFIED_ECLIPSE_VERSIONS_EMPTY_VALUE" value="${jde.certified.eclipse.versions}"/>
+                <filter token="CERTIFIED_JDT_VERSIONS_EMPTY_VALUE" value="${jde.certified.jdt.versions}"/>
+                <filter token="EULA_LICENSE_PATH" value="${eula.license.path}"/>
+                <filter token="COMPONENTPACK_PLUGIN_JARFILENAME_EMPTY_VALUE" value="${componentpack.plugin.filename}"/>
+                <filter token="COMPONENTPACK_PLUGIN_FOLDERNAME_EMPTY_VALUE" value="${jde.plugin.name}${pack-version}"/>
+            </filterset>
+        </copy>
+
+        <copy todir="${installer.resources.dir}">
+            <fileset dir="Resources/"/>
+        </copy>
+
+    </target>
+
+    <target name="prepare-resources-win" if="build.os.win">
+		<echo message="----->copying file from ${installer.resources.dir} to ${jde.additonal.resources}/win/"/>
+        <copy todir="${installer.resources.dir}">
+            <fileset dir="${jde.additonal.resources}/win/"/>
+        </copy>
+    </target>
+
+    <target name="prepare-resources-mac" if="build.os.mac">
+        <copy todir="${installer.resources.dir}">
+            <fileset dir="${jde.additonal.resources}/mac/"/>
+        </copy>
+    </target>
+
+    <target name="buildInstaller" depends="prepare-installer-files, prepare-resources-win, prepare-resources-mac">
+
+        <!--  Create installer and move it to specified folder-->
+        <IABuildInstallerTask
+            IAlocation="${install.anywhere.root}"
+            IAProjectFile="${installer.builderScript.dir}/EJDEInstaller.iap_xml"
+            BuildMacOSX="${param.build.mac}"
+            BuildWindowsWithVM="${param.build.win}"
+            BuildWindowsWithoutVM="${param.build.win}"/>
+  
+  <echo message="target.dir--->${target.dir}"/>
+  <echo message="param.installer.name--->${param.installer.name}"/>
+  <echo message="installer.builderScript.dir--->${installer.builderScript.dir}"/>
+  <echo message="param.installer.location--->${param.installer.location}"/>
+  
+        <move tofile="${target.dir}/${param.installer.name}" flatten="true">
+            <fileset dir="${installer.builderScript.dir}">
+                <include name="**/${param.installer.location}/*.*"/>
+            </fileset>
+        </move>
+
+    </target>
+
+    <target name="installer-full-windows" if="build.os.win">
+        <property name="build.os" value="win"/>
+
+        <!-- Create installer for EJDE-Full -->
+        <antcall target="buildInstaller">
+            <param name="param.dest.dir" value="${dist.installer.dir}"/>
+            <param name="param.builderScript.templateName" value="EJDEInstaller-full.iap_xml"/>
+            <param name="param.installer.name" value="${window.full.installer}"/>
+            <param name="param.installer.location" value="VM"/>
+            <param name="param.build.mac" value="false"/>
+            <param name="param.build.win" value="true"/>
+        </antcall>
+
+    </target>
+
+    <target name="installer-full-mac" if="build.os.mac" >
+        <property name="build.os" value="mac"/>
+
+        <antcall target="buildInstaller">
+            <param name="param.dest.dir" value="${dist.installer.dir}"/>
+            <param name="param.builderScript.templateName" value="EJDEInstaller-mac-full.iap_xml"/>
+            <param name="param.installer.name" value="${mac.full.installer}"/>
+            <param name="param.installer.location" value="MacOSX"/>
+            <param name="param.build.mac" value="true"/>
+            <param name="param.build.win" value="false"/>
+        </antcall>
+    </target>
+
+
+    <target name="dist" depends="build-installer-custom-code, build-ant-custom-code">
+        <antcall target="installer-full-windows"/>
+        <antcall target="installer-full-mac"/>
+    </target>
+
+    <target name="clean" depends="init">
+        <delete dir="${target.installer.dir}" failonerror="false"/>
+        <ant antfile="build.xml" dir="AntExtensions" target="clean"/>
+        <ant antfile="build.xml" dir="EJDECustomCodeProject" target="clean"/>
+    </target>
+    
+</project>

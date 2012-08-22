@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!-- saved from url=(0014)http://localhost/ -->
+<html>
+	<head>
+		<title>BlackBerry Getting Started</title>
+	    <style type="text/css">
+			.centerDiv {
+				text-align:center;
+				margin-top: 0px;
+				font-family: verdana, tahoma;
+			}
+
+		</style>
+		<script type="text/javascript">
+
+			var imgPath = 'http://www.blackberry.com/developers/startpages/common/connection.png';
+			var startPath = 'http://developer.blackberry.com/java/';
+			var count = 0;
+
+			function goToStartPage() {
+				location.assign(startPath);
+			}
+
+			function noConnectivity() {
+				document.getElementById('loading').style.visibility = 'hidden';
+				document.getElementById('noConnection').style.visibility = 'visible';
+			}
+
+			function attemptConnection() {
+				document.getElementById('loading').style.visibility = 'visible';
+				document.getElementById('noConnection').style.visibility = 'hidden';
+				var img = new Image();
+				img.onload = function () {
+						setTimeout('goToStartPage();', 2000);
+					}
+				img.onerror = function () {
+						setTimeout('noConnectivity();', 2000);
+					}
+				img.src = imgPath;
+			}
+
+		</script>
+	</head>
+	<body onload="attemptConnection()">
+
+		<p align="center">
+			<img src="java_eclipse.png"/>
+		</p>
+
+		<div id="loading" class="centerDiv">
+			<span >Loading Online Content...</span><br />
+			<img style="margin-top: 10px;" src="loading.gif"/>
+		</div>
+
+		<div id="noConnection" class="centerDiv" style="visibility:hidden;">
+			<span><font color="Red">We could not connect to the online resources.</font>  <br/>Please ensure you are connected to the Internet and then <a href="javascript:attemptConnection();">try again</a></span>
+		</div>
+
+	</body>
+</html>

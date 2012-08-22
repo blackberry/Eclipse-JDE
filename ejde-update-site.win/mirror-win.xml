@@ -1,0 +1,22 @@
+<project name="mirror-jde-win" default="mirror-jde">
+ <!-- <property name="jde.url.win.base" value="http://www.blackberry.com/go/eclipseUpdate/3.6/java"/> //old -->
+ <property name="jde.url.win.base" value="http://www.blackberry.com/developers/jar/3.6/java"/>
+ <!-- <property name="jde.url.win.base" value="http://www.blackberry.com/developers/jar/win/java"/> //proposed... -->
+
+  <property name="bb.sdk.local.repo.win" value="bb.sdk.local.repo.win" />
+
+  <target name="mirror-jde">
+    <p2.mirror destination="file:/${bb.sdk.local.repo.win}" description="BB SDK local repo Win" verbose="true" validate="true">
+      <source>
+        <repository location="${jde.url.win.base}" />
+      	<repository location="http://download.eclipse.org/releases/indigo/" />
+      </source>
+      <iu id="net.rim.ejde.componentpack7.1.0" />
+      <iu id="net.rim.ejde.feature.componentpack7.1.0.feature.jar" />
+      <iu id="org.eclipse.ui" />
+      <iu id="org.eclipse.core.runtime" />
+      <slicingOptions includeFeatures="true" followStrict="true"/>
+    </p2.mirror>
+
+  </target>
+</project>
